@@ -14,8 +14,12 @@ createServer(() => {})
 		}
 
 		req.on("data", (chunkBuffer) => {
-			const body = JSON.parse(chunkBuffer.toString());
-			req.body = body;
+			// const body = JSON.parse(chunkBuffer.toString()); // TODO
+
+			const body = chunkBuffer.toString();
+			
+
+			req.body = JSON.parse(body);
 		})
 
 		req.on("end", () => {
