@@ -8,42 +8,57 @@ const { urlCheck } = require("./helpers/urlCheck");
 createServer(() => {})
     .listen(3000)
     .on("request", (req, res) => {
-        req.on("data", (buffer) => {
 
-					if (!["GET", "POST"].includes(req.method)) {
-						res.writeHead(400, {});
-						res.end("invalid request1");
-						return;
-					}
+		if (!urlCheck(res, req.url)) {
+			return;
+		}
 
-					if (buffer && req.method === "GET" || !buffer && req.method === "POST") {
+		req.on("data", (chunkBuffer) => {
+			const body = JSON.parse(chunkBuffer.toString());
+			req.body = body;
+		})
 
-						const fn = functionMap[req.url];
-						
-						if (!fn) {
-							res.writeHead(400, {});
-							res.end("no function with that name");
-							return;
-						}
+		req.on("end", () => {
 
-						if (fn.method !== req.method) {
-							res.writeHead(400, {});
-							res.end(`function only accepts ${fn.method} requests`);
-							return;
-						}
+			if (!["GET", "POST"].includes(req.method)) {
+				res.writeHead(400, {});
+				res.end(JSON.stringify({
+					message: "only GET and POST allowed"
+				}));
+				return;
+			}
 
-						const options = {} // TODO?
-						res.req.body = JSON.parse(JSON.stringify(buffer));
-						fn.fn(res, {});
-						return;
-					} else {
-						res.writeHead(400, {});
-						res.end("invalid request batata");
-						return;
-					}
-        });
 
-				if (req.method !== "POST") {
-					req.emit("data");
+			if (!req.body && req.method === "GET" || req.body && req.method === "POST") {
+
+				const fn = functionMap[req.url];
+				
+				if (!fn) {
+					res.writeHead(400, {});
+					res.end(JSON.stringify({
+						message: "no function with that name"
+					}));
+					return;
 				}
+
+				if (fn.method !== req.method) {
+					res.writeHead(400, {});
+					res.end(`function only accepts ${fn.method} requests`);
+					return;
+				}
+
+				const options = {} // TODO?
+				fn.fn(res, {});
+				return;
+
+			} else {
+				res.writeHead(400, {});
+				res.end(JSON.stringify({
+					message: "POST requests must have payload. GET requests cannot have payload."
+				}));
+				return;
+			}
+
+		});
+	
 });
