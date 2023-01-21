@@ -3,3 +3,5 @@ const options = {
     csvGenerator: ""
   }
 }
+
+module.exports = options;
