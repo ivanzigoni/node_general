@@ -1,2 +1,2 @@
-cd /home/ivan/Documents/testes/node/file_handling
-npm run csv -- path=$1 filename=$2 lines=$3
+cd $1
+npm run csv -- path=$2 filename=$3 lines=$4
