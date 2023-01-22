@@ -1,27 +1,41 @@
-const { exec } = require('node:child_process');
-const { join } = require("node:path");
 const fs = require("node:fs");
+
+function writeInDisk(diskStream, line) {
+    diskStream.write(line);
+}
+
+function writeInResponse(res, line, should) {
+    if (should) res.write(line)
+}
 
 function main(res, options) {
 
-    const { req: { body: { path, filename, lines } } } = res;
+    const { req: { body: { path, filename, lines, getFile = false } } } = res;
 
-    const stream = fs.createWriteStream(`${path}/${filename}.csv`);
+    const destinationPath = `${path}/${filename}.csv`;
 
-    stream.write(`column1type=string,column2type=string,column3type=int,column4type=date\n`);
-    res.write(`column1type=string,column2type=string,column3type=int,column4type=date\n`)
+    const diskStream = fs.createWriteStream(destinationPath);
 
-    for (let i = 0; i < lines; i += 1) {
-        const column1 = `column1-${i}`
-        const column2 = `column2-${i}`
-        const column3 = i
-        const column4 = new Date()
+    const csvHeader = `column1type=string,column2type=string,column3type=int,column4type=date\n`
 
-        stream.write(`${column1},${column2},${column3},${column4.toISOString()}\n`)
-        res.write(`${column1},${column2},${column3},${column4.toISOString()}\n`)
+    writeInDisk(diskStream, csvHeader);
+    writeInResponse(res, csvHeader, getFile);
+
+
+    for (let i = 0; i < lines - 1; i += 1) {
+            const column1 = `column1-${i}`
+            const column2 = `column2-${i}`
+            const column3 = i
+            const column4 = new Date().toISOString()
+            const line = `${column1},${column2},${column3},${column4}\n`
+    
+            writeInDisk(diskStream, line)
+            writeInResponse(res, line, getFile)
     }
 
-    stream.close();
+    diskStream.end();
+    res.end();
+
     return;
 }
 
@@ -30,16 +44,16 @@ function teste1(res, options) {
     const { req, req: { body } } = res;
 
 
-    const { path, filename, lines } = body;
+    const { path, filename, lines, getFile } = body;
 
 
     if (!path || !filename || !lines || !body) {
-        throw new Error("invalid query");
+        res.writeHead(400)
+        res.end("bad request")
+        return;
     }
 
-
-    main(res, options);
-    res.end(JSON.stringify({ message: "file created" }))
+    main(res, options)
 }
 
 module.exports = { teste1 };
