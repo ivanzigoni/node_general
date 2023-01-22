@@ -2,7 +2,7 @@ const http = require('node:http');
 
 const postData = JSON.stringify({
     path: '/home/ivan/Documents/testes/node_general/files',
-    filename: 'teste1',
+    filename: 'teste6',
     lines: 1000,
     getFile: true
 });
