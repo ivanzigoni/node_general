@@ -6,18 +6,17 @@ const { urlCheck } = require("./helpers/urlCheck");
 
 
 createServer(() => {
-	
+	console.log("aki")
 })
     .listen(3000)
     .on("request", (req, res) => {
-		console.log("aki")
-		// if (!urlCheck(res, req.url)) {
-		// 	return;
-		// }
+
+		if (!urlCheck(res, req.url)) {
+			return;
+		}
 		
 		req.on("data", (chunkBuffer) => {
 			// const body = JSON.parse(chunkBuffer.toString()); // TODO
-
 			
 			const body = chunkBuffer.toString();
 
