@@ -1,7 +1,5 @@
 const { createServer, IncomingMessage } = require("node:http");
-const { Transform } = require("node:stream");
 const functionMap = require("./functions");
-const getFunction = require("./helpers/getFunction");
 const { urlCheck } = require("./helpers/urlCheck");
 
 

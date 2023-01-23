@@ -14,8 +14,6 @@ function main(res, options) {
 
     const destinationPath = `${path}/${filename}.csv`;
 
-    console.log(__dirname);
-
     const diskStream = fs.createWriteStream(destinationPath);
 
     const csvHeader = `column1type=string,column2type=string,column3type=int,column4type=date\n`
