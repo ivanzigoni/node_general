@@ -3,9 +3,7 @@ const functionMap = require("./functions");
 const { urlCheck } = require("./helpers/urlCheck");
 
 
-createServer(() => {
-	console.log("aki")
-})
+createServer(() => {})
     .listen(3000)
     .on("request", (req, res) => {
 
@@ -22,7 +20,6 @@ createServer(() => {
 		})
 
 		req.on("end", () => {
-			console.log("aki")
 			if (!["GET", "POST"].includes(req.method)) {
 				res.writeHead(400, {});
 				res.end(JSON.stringify({

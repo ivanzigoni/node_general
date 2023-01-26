@@ -2,12 +2,14 @@ const gm = require("gm").subClass({ appPath: String.raw`/home/ivan/Downloads/mag
 const fs = require("fs");
 const randomHex = require('random-hex');
 
-function generateImage(path) {
+function generateImage(path, res) {
   gm(400, 400, randomHex.generate())
   .drawText(200, 200, Array.from({ length: 200 }).reduce(acc => acc + `k`, `j`), "wat")
   .magnify(0.1)
   .write(path, function (err) {
     if (err) {
+      res.writeHead(500, {})
+      res.end("error");
       console.log(err, "sopinha pa nois");
     }
   })
@@ -19,16 +21,16 @@ async function main(res, options) {
 
     const path = `/home/ivan/Documents/testes/node_general/files/${now}.jpg`;
 
-    generateImage(path);
+    generateImage(path, res);
 
     while (!fs.existsSync(path) || !fs.readFileSync(path).byteLength) {
-      console.log("waiting for file", new Date().getTime())
+      process.stdout.write("waiting for file " + `${new Date().getTime()}\r`);
     }
 
     const stream = fs.createReadStream(path)
-    .on("data", (chunk) => { res.write(chunk); console.log("auqi") })
+    .on("data", (chunk) => { res.write(chunk); })
     .on("close", () => {
-      fs.rm(path, (err) => { if (err) console.log(err, "frango com batata"); });
+      fs.rm(path, (err) => { if (err) stream.emit("error") });
       res.end();
     })
     .on("end", () => {
@@ -40,6 +42,7 @@ async function main(res, options) {
     })
 
 }
+
 
 function teste3(res, options) {
     main(res, options);
