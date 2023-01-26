@@ -1,5 +1,5 @@
 const puppeteer = require('puppeteer');
-const c = require("./credentials")
+const c = require("./env")
 
 
 async function main() {
@@ -38,12 +38,31 @@ async function main() {
     
     await page.click('[loginButton="true"]');
   
-    await page.waitForSelector('article')
+    await page.waitForSelector('article');
+
+    // await page.click('span[class="css-901oao css-16my406 r-poiln3 r-bcqeeo r-qvutc0"]')
+    
+    await page.goto("https://twitter.com/settings/profile");
+
+    await page.waitForSelector(`input[data-testid="fileInput"]`)
+
+    const [_, avatar] = await page.$$(`input[data-testid="fileInput"]`)
+
+    await avatar.uploadFile("/home/ivan/Documents/testes/node_general/crawler/screenshots/2023-01-26T23:01:07.198Z.jpg")
   
-    await page.screenshot({ path: `./screenshots/${new Date().toISOString()}.jpg` });
+    await page.waitForSelector('div[data-testid="applyButton"]')
+
+    await page.click('div[data-testid="applyButton"]')
+
+    await page.waitForSelector('div[data-testid="Profile_Save_Button"]')
+    
+    await page.click('div[data-testid="Profile_Save_Button"]')
+
+    setTimeout(async () => {
+        await page.screenshot({ path: `./screenshots/${new Date().toISOString()}.jpg` });
   
-  
-    browser.close()
+        browser.close()
+    }, 2000);
 }
 
 main();
