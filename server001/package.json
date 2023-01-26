@@ -11,6 +11,8 @@
   "author": "me",
   "license": "ISC",
   "dependencies": {
-    "nodemon": "^2.0.20"
+    "gm": "^1.25.0",
+    "nodemon": "^2.0.20",
+    "random-hex": "^1.0.2"
   }
 }
