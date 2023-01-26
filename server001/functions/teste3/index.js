@@ -15,25 +15,30 @@ function generateImage(path) {
 
 async function main(res, options) {
 
-    const path = "/home/ivan/Documents/testes/node_general/files/teste1.jpg";
+    const now = new Date().getTime();
+
+    const path = `/home/ivan/Documents/testes/node_general/files/${now}.jpg`;
 
     generateImage(path);
 
-    while (!fs.existsSync(path)) {
-      console.log("waiting for file")
+    while (!fs.existsSync(path) || !fs.readFileSync(path).byteLength) {
+      console.log("waiting for file", new Date().getTime())
     }
 
     const stream = fs.createReadStream(path)
-      .on("data", (chunk) => { res.write(chunk); })
-      .on("end", () => {
-        fs.rm(path, (err) => { if (err) console.log(err, "frango com batata"); });
-        stream.close((err) => { if (err) console.log(err); })
-        res.end();
-      })
-      .on("error", (err) => {
-        console.log(err);
-        res.end("error reading stream")
-      })
+    .on("data", (chunk) => { res.write(chunk); console.log("auqi") })
+    .on("close", () => {
+      fs.rm(path, (err) => { if (err) console.log(err, "frango com batata"); });
+      res.end();
+    })
+    .on("end", () => {
+      stream.emit("close");
+    })
+    .on("error", (err) => {
+      console.log(err);
+      res.end("error reading stream")
+    })
+
 }
 
 function teste3(res, options) {
