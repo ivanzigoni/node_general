@@ -1,8 +1,8 @@
 const puppeteer = require('puppeteer');
 const c = require("./env")
+const fs = require("fs");
 
-
-async function main() {
+async function main(imagePath) {
     const browser = await puppeteer.launch();
     const page = await browser.newPage();
   
@@ -46,7 +46,9 @@ async function main() {
 
     const [_, avatar] = await page.$$(`input[data-testid="fileInput"]`)
 
-    await avatar.uploadFile("/home/ivan/Pictures/purple.png")
+    if (!fs.existsSync(imagePath)) throw new Error("invalid image path");
+
+    await avatar.uploadFile(imagePath);
 
     await page.waitForSelector('div[data-testid="applyButton"]')
 
@@ -57,7 +59,7 @@ async function main() {
     await page.click('div[data-testid="Profile_Save_Button"]')
 
     setTimeout(async () => {
-        await page.screenshot({ path: `./screenshots/${new Date().toISOString()}.jpg` });
+        // await page.screenshot({ path: `./screenshots/${new Date().toISOString()}.jpg` });
   
         browser.close()
     }, 2000);
@@ -65,4 +67,10 @@ async function main() {
     return;
 }
 
-module.exports = { main };
+async function crawler(imagePath) {
+  await main(imagePath);
+  return;
+}
+
+
+module.exports = { crawler };

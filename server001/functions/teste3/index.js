@@ -1,6 +1,7 @@
 const gm = require("gm").subClass({ appPath: String.raw`/home/ivan/Downloads/magick` });
 const fs = require("fs");
 const randomHex = require('random-hex');
+const { crawler } = require("../../../crawler/");
 
 function generateImage(path, res) {
   gm(400, 400, randomHex.generate())
@@ -29,8 +30,12 @@ async function main(res, options) {
 
     const stream = fs.createReadStream(path)
     .on("data", (chunk) => { res.write(chunk); })
-    .on("close", () => {
+    .on("close", async () => {
+
+      await crawler(path);
+
       fs.rm(path, (err) => { if (err) stream.emit("error") });
+      
       res.end();
     })
     .on("end", () => {
