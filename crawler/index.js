@@ -39,8 +39,6 @@ async function main() {
     await page.click('[loginButton="true"]');
   
     await page.waitForSelector('article');
-
-    // await page.click('span[class="css-901oao css-16my406 r-poiln3 r-bcqeeo r-qvutc0"]')
     
     await page.goto("https://twitter.com/settings/profile");
 
@@ -48,8 +46,8 @@ async function main() {
 
     const [_, avatar] = await page.$$(`input[data-testid="fileInput"]`)
 
-    await avatar.uploadFile("/home/ivan/Documents/testes/node_general/crawler/screenshots/2023-01-26T23:01:07.198Z.jpg")
-  
+    await avatar.uploadFile("/home/ivan/Pictures/purple.png")
+
     await page.waitForSelector('div[data-testid="applyButton"]')
 
     await page.click('div[data-testid="applyButton"]')
@@ -63,6 +61,8 @@ async function main() {
   
         browser.close()
     }, 2000);
+
+    return;
 }
 
-main();
+module.exports = { main };
