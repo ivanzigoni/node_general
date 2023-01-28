@@ -23,14 +23,14 @@ function main(res, options) {
 
 
     for (let i = 0; i < lines - 1; i += 1) {
-            const column1 = `column1-${i}`
-            const column2 = `column2-${i}`
-            const column3 = i
-            const column4 = new Date().toISOString()
-            const line = `${column1},${column2},${column3},${column4}\n`
-    
-            writeInDisk(diskStream, line)
-            writeInResponse(res, line, getFile)
+			const column1 = `column1-${i}`
+			const column2 = `column2-${i}`
+			const column3 = i
+			const column4 = new Date().toISOString()
+			const line = `${column1},${column2},${column3},${column4}\n`
+
+			writeInDisk(diskStream, line)
+			writeInResponse(res, line, getFile)
     }
 
     diskStream.end();

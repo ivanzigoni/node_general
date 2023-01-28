@@ -26,7 +26,7 @@ function makeQuery(url) {
 
 }
 
-function requestMetadata(res) {
+function setRequestMetadata(res) {
     const { req } = res; 
     const { url, query } = makeQuery(req.url);
 
@@ -36,4 +36,4 @@ function requestMetadata(res) {
     return;
 }
 
-module.exports = { requestMetadata };
+module.exports = { setRequestMetadata };

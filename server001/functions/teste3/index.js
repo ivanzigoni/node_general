@@ -4,9 +4,8 @@ const randomHex = require('random-hex');
 const { crawler } = require("../../../crawler/");
 
 function generateImage(path, res) {
-  gm(400, 400, randomHex.generate())
-  .drawText(200, 200, Array.from({ length: 200 }).reduce(acc => acc + `k`, `j`))
-  .magnify(0.1)
+  gm(600, 600, randomHex.generate())
+  .drawText(20, 180, Array.from({ length: 20 }).reduce(acc => acc + new Date().getTime().toString()), "")
   .write(path, function (err) {
     if (err) {
       res.writeHead(500, {})
@@ -50,12 +49,12 @@ let jobRunning = false;
 let job;
 function teste3(res, options) {
     if (jobRunning === false) {
-      jobRunning = true;
       main(res, options);
       job = setInterval(() => { main(res, options); }, 30000);
+      jobRunning = true;
     } else {
-      jobRunning = false;
       clearInterval(job);
+      jobRunning = false;
       crawler(null, true);
       res.end("job suspended")
     }
