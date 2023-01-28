@@ -10,8 +10,8 @@ function generateImage(path, res) {
   .write(path, function (err) {
     if (err) {
       res.writeHead(500, {})
-      res.end("error");
-      console.log(err, "sopinha pa nois");
+      res.end("error generating image");
+      console.log(err);
     }
   })
 }
@@ -20,26 +20,34 @@ async function main(res, options) {
 
     const now = new Date().getTime();
 
-    const path = `/home/ivan/Documents/testes/node_general/files/${now}.jpg`;
+    const path = __dirname + `/tmp/${now}.jpg`
 
     generateImage(path, res);
 
     while (!fs.existsSync(path) || !fs.readFileSync(path).byteLength) {
+
+      if (new Date().getTime() - now >= 20000) { res.writeHead(500, {}); res.end("timeout generating file"); return; };
+
       process.stdout.write("waiting for file " + `${new Date().getTime()}\r`);
     }
 
+    console.log("\r");
+
     const stream = fs.createReadStream(path)
-    .on("data", (chunk) => { res.write(chunk); })
-    .on("close", async () => {
-
-      await crawler(path);
-
-      fs.rm(path, (err) => { if (err) stream.emit("error") });
-      
-      res.end();
+    .on("data", (chunk) => {
+      res.write(chunk);
     })
-    .on("end", () => {
-      stream.emit("close");
+    .on("end", async () => {
+      try {
+        await crawler(path);
+        console.log(path);
+        fs.rm(path, (err) => { if (err) stream.emit("error") });
+      } catch(e) {
+        res.writeHead(500, {});
+      } finally {
+        stream.destroy((err) => { console.log(err) });
+        res.end();
+      }
     })
     .on("error", (err) => {
       console.log(err);
