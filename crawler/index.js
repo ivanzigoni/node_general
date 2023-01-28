@@ -2,8 +2,6 @@ const puppeteer = require('puppeteer');
 const c = require("./env")
 const fs = require("fs");
 
-let session = {};
-
 async function login(session) {
   const { browser, page } = session;
 
@@ -41,12 +39,10 @@ async function login(session) {
 
   await page.waitForSelector('article');
 
-  return session;
+  return;
 }
 
-
 async function changePicture(session, imagePath) {
-  
   const { page } = session;
 
   await page.goto("https://twitter.com/settings/profile");
@@ -56,7 +52,6 @@ async function changePicture(session, imagePath) {
   const [_, avatar] = await page.$$(`input[data-testid="fileInput"]`)
 
   if (!fs.existsSync(imagePath)) {
-    console.log(imagePath);
     throw new Error("invalid image path");
   }
 
@@ -70,26 +65,25 @@ async function changePicture(session, imagePath) {
   
   await page.click('div[data-testid="Profile_Save_Button"]')
 
-  // setTimeout(async () => {
-  //     // await page.screenshot({ path: `./screenshots/${new Date().toISOString()}.jpg` });
-  //     // browser.close()
-  //     await page.goto("https://twitter.com/settings/profile");
-  // }, 2000);
-
   return;
 }
 
-async function crawler(imagePath) {
-  const browser = await puppeteer.launch();
-  const page = await browser.newPage();
+let session = {};
+async function crawler(imagePath, destroySession = false) {
+  if (destroySession) {
+    session = {};
+    return;
+  }
 
   if (!session.browser) {
+    const browser = await puppeteer.launch();
+    const page = await browser.newPage();
+  
     session = { browser, page };
     await login(session);  
   }
 
   return changePicture(session, imagePath);
 }
-
 
 module.exports = { crawler };

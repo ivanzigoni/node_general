@@ -37,7 +37,7 @@ async function main(res, options) {
 
     await crawler(path);
 
-    fs.rm(path, (err) => { if (err)  { stream.emit("error"); } });
+    fs.rm(path, (err) => { if (err)  { console.log(err); } });
 
     if (!res.writableFinished) {
         res.end("ok")
@@ -46,40 +46,19 @@ async function main(res, options) {
     console.log("end");
 }
 
-
+let jobRunning = false;
+let job;
 function teste3(res, options) {
-    main(res, options);
-    setInterval(() => { main(res, options); }, 30000);
+    if (jobRunning === false) {
+      jobRunning = true;
+      main(res, options);
+      job = setInterval(() => { main(res, options); }, 30000);
+    } else {
+      jobRunning = false;
+      clearInterval(job);
+      crawler(null, true);
+      res.end("job suspended")
+    }
 }
 
 module.exports = { teste3 };
-
-
-
-
-
-
-
-
-
-
-
-    // const stream = fs.createReadStream(path)
-    // .on("data", (chunk) => {
-    //   res.write(chunk);
-    // })
-    // .on("end", async () => {
-    //   try {
-    //     await crawler(path);
-
-    //     // fs.rm(path, (err) => { if (err)  { stream.emit("error"); } });
-    //   } catch(e) {
-    //     console.log(e);
-    //   } finally {
-    //     res.end();
-    //   }
-    // })
-    // .on("error", (err) => {
-    //   console.log(err);
-    //   res.end("error reading stream")
-    // })

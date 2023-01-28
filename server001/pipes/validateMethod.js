@@ -1,5 +1,4 @@
 function validateMethod(res) {
-
 	const { req } = res;
 
 	if (!["GET", "POST"].includes(req.method)) {

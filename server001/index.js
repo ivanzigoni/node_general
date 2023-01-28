@@ -1,14 +1,15 @@
-const { createServer, IncomingMessage } = require("node:http");
-const functionMap = require("./functions");
-const { urlCheck } = require("./helpers/urlCheck");
-const { requestMetadata } = require("./helpers/requestObject");
+const { createServer } = require("node:http");
+const { urlCheck } = require("./pipes/urlCheck");
+const { requestMetadata } = require("./pipes/requestObject");
 const { getFunction } = require("./helpers/getFunction");
-const { validateMethod } = require("./helpers/validateMethod");
+const { validateMethod } = require("./pipes/validateMethod");
 
 
 createServer(() => {})
     .listen(3000)
     .on("request", (req, res) => {
+
+		[validateMethod, urlCheck, requestMetadata].forEach(fn => fn(res));
 		
 		req.on("data", (chunkBuffer) => {
 			const body = chunkBuffer.toString();
@@ -17,14 +18,13 @@ createServer(() => {})
 		})
 
 		req.on("end", () => {
-
-			[validateMethod, urlCheck, requestMetadata].forEach(fn => fn(res));
-
 			const handler = getFunction(res);
 
 			const options = {} // TODO
 
-			handler && handler.fn(res, options);
+			if (handler) {
+				handler.fn(res, options);
+			}
 		});
 
 });
