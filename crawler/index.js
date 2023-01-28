@@ -47,6 +47,7 @@ async function main(imagePath) {
     const [_, avatar] = await page.$$(`input[data-testid="fileInput"]`)
 
     if (!fs.existsSync(imagePath)) {
+      console.log(imagePath);
       throw new Error("invalid image path");
     }
 
@@ -65,10 +66,11 @@ async function main(imagePath) {
   
         browser.close()
     }, 2000);
+    return;
 }
 
 async function crawler(imagePath) {
-  main(imagePath);
+  return main(imagePath);
 }
 
 

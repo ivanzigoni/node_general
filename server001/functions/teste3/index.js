@@ -42,7 +42,7 @@ async function main(res, options) {
     .on("end", async () => {
       try {
         await crawler(path);
-        console.log(path);
+
         fs.rm(path, (err) => { if (err)  { stream.emit("error"); } });
       } catch(e) {
         console.log(e);
