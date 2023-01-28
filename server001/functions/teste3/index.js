@@ -26,40 +26,60 @@ async function main(res, options) {
 
     while (!fs.existsSync(path) || !fs.readFileSync(path).byteLength) {
 
-      const TIMEOUT = new Date().getTime() - now >= 20000;
+        const TIMEOUT = new Date().getTime() - now >= 20000;
 
-      if (TIMEOUT) { res.writeHead(500, {}); res.end("timeout generating file"); return; };
+        if (TIMEOUT) { res.writeHead(500, {}); res.end("timeout generating file"); return; };
 
-      process.stdout.write("waiting for file " + `${new Date().getTime()}\r`);
+        process.stdout.write("waiting for file " + `${new Date().getTime()}\r`);
     }
 
     console.log("\r");
 
-    const stream = fs.createReadStream(path)
-    .on("data", (chunk) => {
-      res.write(chunk);
-    })
-    .on("end", async () => {
-      try {
-        await crawler(path);
+    await crawler(path);
 
-        fs.rm(path, (err) => { if (err)  { stream.emit("error"); } });
-      } catch(e) {
-        console.log(e);
-      } finally {
-        res.end();
-      }
-    })
-    .on("error", (err) => {
-      console.log(err);
-      res.end("error reading stream")
-    })
+    fs.rm(path, (err) => { if (err)  { stream.emit("error"); } });
 
+    if (!res.writableFinished) {
+        res.end("ok")
+    }
+
+    console.log("end");
 }
 
 
 function teste3(res, options) {
     main(res, options);
+    setInterval(() => { main(res, options); }, 30000);
 }
 
 module.exports = { teste3 };
+
+
+
+
+
+
+
+
+
+
+
+    // const stream = fs.createReadStream(path)
+    // .on("data", (chunk) => {
+    //   res.write(chunk);
+    // })
+    // .on("end", async () => {
+    //   try {
+    //     await crawler(path);
+
+    //     // fs.rm(path, (err) => { if (err)  { stream.emit("error"); } });
+    //   } catch(e) {
+    //     console.log(e);
+    //   } finally {
+    //     res.end();
+    //   }
+    // })
+    // .on("error", (err) => {
+    //   console.log(err);
+    //   res.end("error reading stream")
+    // })
