@@ -5,7 +5,7 @@ const { crawler } = require("../../../crawler/");
 
 function generateImage(path, res) {
   gm(400, 400, randomHex.generate())
-  .drawText(200, 200, Array.from({ length: 200 }).reduce(acc => acc + `k`, `j`), "wat")
+  .drawText(200, 200, Array.from({ length: 200 }).reduce(acc => acc + `k`, `j`))
   .magnify(0.1)
   .write(path, function (err) {
     if (err) {
@@ -26,7 +26,9 @@ async function main(res, options) {
 
     while (!fs.existsSync(path) || !fs.readFileSync(path).byteLength) {
 
-      if (new Date().getTime() - now >= 20000) { res.writeHead(500, {}); res.end("timeout generating file"); return; };
+      const TIMEOUT = new Date().getTime() - now >= 20000;
+
+      if (TIMEOUT) { res.writeHead(500, {}); res.end("timeout generating file"); return; };
 
       process.stdout.write("waiting for file " + `${new Date().getTime()}\r`);
     }
@@ -41,11 +43,10 @@ async function main(res, options) {
       try {
         await crawler(path);
         console.log(path);
-        fs.rm(path, (err) => { if (err) stream.emit("error") });
+        fs.rm(path, (err) => { if (err)  { stream.emit("error"); } });
       } catch(e) {
-        res.writeHead(500, {});
+        console.log(e);
       } finally {
-        stream.destroy((err) => { console.log(err) });
         res.end();
       }
     })

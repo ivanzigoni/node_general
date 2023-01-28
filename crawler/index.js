@@ -65,12 +65,10 @@ async function main(imagePath) {
   
         browser.close()
     }, 2000);
-
-    return;
 }
 
 async function crawler(imagePath) {
-  return main(imagePath);
+  main(imagePath);
 }
 
 
