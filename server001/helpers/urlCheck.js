@@ -1,4 +1,5 @@
-function urlCheck(res, url) {
+function urlCheck(res) {
+    const { req: { url } } = res;
 
     if (!url) {
         res.writeHead(404);

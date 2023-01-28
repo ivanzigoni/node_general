@@ -1,26 +1,26 @@
-const functionsMap = require("../functions/");
+const router = require("../functions");
 
 function getFunction(res) {
-  const { req, req: { method, url } } = res;
+  const { req } = res;
+  const { url } = req;
 
-  console.log(url);
-  console.log(functionsMap)
-
-  const fn = functionsMap[url];
-
-  if (!fn) {
+  const handler = router[url];
+				
+  if (!handler) {
     res.writeHead(404, {});
-    res.end("no function with that name");
+    res.end(JSON.stringify({
+      message: "no function with that name"
+    }));
     return;
   }
 
-  if (fn.method !== method) {
+  if (handler.method !== req.method) {
     res.writeHead(400, {});
-    res.end(`this function only accepts ${fn.method} requests`);
+    res.end(`function only accepts ${handler.method} requests`);
     return;
   }
 
-  fn.fn()
+  return handler;
 }
 
-module.exports = getFunction;
+module.exports = { getFunction };

@@ -26,7 +26,8 @@ function makeQuery(url) {
 
 }
 
-function requestMetadata(req) {
+function requestMetadata(res) {
+    const { req } = res; 
     const { url, query } = makeQuery(req.url);
 
     req.url = url;
