@@ -1,6 +1,7 @@
 const { createServer, IncomingMessage } = require("node:http");
 const functionMap = require("./functions");
 const { urlCheck } = require("./helpers/urlCheck");
+const { requestMetadata } = require("./helpers/requestObject");
 
 
 createServer(() => {})
@@ -30,6 +31,8 @@ createServer(() => {})
 
 
 			if (!req.body && req.method === "GET" || req.body && req.method === "POST") {
+
+				requestMetadata(req);
 
 				const fn = functionMap[req.url];
 				

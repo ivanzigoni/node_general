@@ -44,9 +44,7 @@ function teste1(res, options) {
 
     const { req, req: { body } } = res;
 
-
     const { path, filename, lines, getFile } = body;
-
 
     if (!path || !filename || !lines || !body) {
         res.writeHead(400)
