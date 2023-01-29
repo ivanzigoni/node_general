@@ -45,16 +45,13 @@ async function main(res, options) {
     console.log("end");
 }
 
-let jobRunning = false;
 let job;
 function teste3(res, options) {
-    if (jobRunning === false) {
+    if (!job) {
       main(res, options);
       job = setInterval(() => { main(res, options); }, 30000);
-      jobRunning = true;
     } else {
       clearInterval(job);
-      jobRunning = false;
       crawler(null, true);
       res.end("job suspended")
     }
