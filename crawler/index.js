@@ -68,6 +68,14 @@ async function changePicture(session, imagePath) {
   return;
 }
 
+async function goToProfile(session) {
+  const { page } = session;
+
+  await page.goto(`https://twitter.com/${c.username}`);
+
+  return;
+}
+
 let session = {};
 async function crawler(imagePath, destroySession = false) {
   if (destroySession) {
@@ -78,7 +86,8 @@ async function crawler(imagePath, destroySession = false) {
   if (!session.browser) {
     const browser = await puppeteer.launch();
     const page = await browser.newPage();
-  
+    page.setDefaultNavigationTimeout(0);
+    
     session = { browser, page };
     await login(session);  
   }
