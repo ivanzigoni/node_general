@@ -4,8 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "node index.js",
-    "reset": "./reset_script.sh"
+    "reset": "./reset_script.sh && npm run setup"
   },
   "keywords": [],
   "author": "",
