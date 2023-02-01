@@ -7,7 +7,17 @@ let client = new Client({
   port: env.POSTGRES_PORT,
   user: env.POSTGRES_USERNAME,
   password: env.POSTGRES_PASSWORD,
-});
+})
+.on("reload", () => {
+	client = new Client({
+		host: env.POSTGRES_HOST,
+		port: env.POSTGRES_PORT,
+		user: env.POSTGRES_USERNAME,
+		password: env.POSTGRES_PASSWORD,
+		database: "sample_database"
+	});
+	client.connect();
+})
 
 function connect() {
 	client.connect((err) => {
@@ -24,18 +34,7 @@ function makeDatabase() {
 		if (err) {
 			console.log(err);
 		} else {
-
-			client.end();
-
-			client = new Client({
-				host: env.POSTGRES_HOST,
-				port: env.POSTGRES_PORT,
-				user: env.POSTGRES_USERNAME,
-				password: env.POSTGRES_PASSWORD,
-				database: "sample_database"
-			});
-
-			connect();
+			client.emit("reload");
 		}
 	})
 }
@@ -45,10 +44,8 @@ function setup() {
 	// setup for recently made container
 	connect();
 	makeDatabase();
-
-	console.log(client.database, "db");
+	console.log("database 'sample_database' created successfully");
 }
-
 setup();
 
 
