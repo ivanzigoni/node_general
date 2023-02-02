@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "reset": "./reset_script.sh && node ./src/setup.js --execute-setup",
-    "seed": "" 
+    "seed": "node ./src/seeder.js" 
   },
   "keywords": [],
   "author": "",

@@ -5,9 +5,11 @@ const { Client } = require('pg')
 
 // for some reason chaining the docker script and this script without a delay closes the connection before it is suposed to
 // lol
-const startTime = new Date().getTime();
-while (new Date().getTime() - startTime <= 2000) {
-  process.stdout.write("waiting " + `${new Date().getTime() - startTime}\r`);
+function wait() {
+	const startTime = new Date().getTime();
+	while (new Date().getTime() - startTime <= 2000) {
+		process.stdout.write("waiting " + `${new Date().getTime() - startTime}\r`);
+	}
 }
 
 let client = new Client({
@@ -66,6 +68,7 @@ function bootstrap() {
 }
 
 if (process.argv.includes("--execute-setup")) {
+	wait();
 	setup();
 }
 
