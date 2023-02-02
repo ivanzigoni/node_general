@@ -24,6 +24,7 @@ let client = new Client({
 		password: env.POSTGRES_PASSWORD,
 		database: "sample_database"
 	});
+	
 	connect();
 })
 
@@ -39,7 +40,7 @@ function connect() {
 }
 
 function makeDatabase() {
-	client.query({
+	return client.query({
 		text: "CREATE DATABASE sample_database;",
 	}, (err, res) => {
 		if (err) {
@@ -58,6 +59,16 @@ function setup() {
 	connect();
 	makeDatabase();
 }
-setup();
+
+function bootstrap() {
+	connect();
+	return client;
+}
+
+if (process.argv.includes("--execute-setup")) {
+	setup();
+}
+
+module.exports = { setup, bootstrap }; 
 
 

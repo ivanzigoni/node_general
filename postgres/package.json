@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "reset": "./reset_script.sh && node ./src/setup.js"
+    "reset": "./reset_script.sh && node ./src/setup.js --execute-setup",
+    "seed": "" 
   },
   "keywords": [],
   "author": "",
